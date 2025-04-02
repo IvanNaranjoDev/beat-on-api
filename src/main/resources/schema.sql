@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (avatar_id) REFERENCES avatars(id) ON DELETE CASCADE 
 );
 
--- 'roles¡
+-- 'roles'
 CREATE TABLE IF NOT EXISTS roles (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(50) UNIQUE NOT NULL
@@ -63,6 +63,15 @@ CREATE TABLE IF NOT EXISTS instrumentals (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- 'sounds'
+CREATE TABLE IF NOT EXISTS inst_sounds (
+    sound_id BIGINT NOT NULL,
+    instrumental_id BIGINT NOT NULL,
+    PRIMARY KEY (sound_id, instrumental_id),
+    FOREIGN KEY (sound_id) REFERENCES sounds(id) ON DELETE CASCADE,
+    FOREIGN KEY (instrumental_id) REFERENCES instrumentals(id) ON DELETE CASCADE
+);
+
 -- 'likes'
 CREATE TABLE IF NOT EXISTS likes (
     user_id BIGINT NOT NULL,
@@ -70,4 +79,18 @@ CREATE TABLE IF NOT EXISTS likes (
     PRIMARY KEY (user_id, instrumental_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (instrumental_id) REFERENCES instrumentals(id) ON DELETE CASCADE
+);
+
+-- 'playlist'
+CREATE TABLE IF NOT EXISTS sounds (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    cover_url VARCHAR(255) NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    public BOOLEAN NOT NULL,
+    user_id BIGINT NOT NULL,
+    instrumental_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (instrumental_id) REFERENCES instrumentals(id) ON DELETE CASCADE
+
 );

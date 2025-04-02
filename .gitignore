@@ -34,3 +34,6 @@ build/
 
 ### Variables de entorno ###
 .env
+
+### ARCHIVO DATA.SQL ###
+data.sql
