@@ -18,6 +18,6 @@ public class Avatar {
     private Long id;
 
     @Column(name = "path_url", nullable = false)
-    private String path_url;
+    private String pathUrl;
 }
 

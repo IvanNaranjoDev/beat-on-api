@@ -66,13 +66,4 @@ public class User {
     )
     private Set<Role> roles;
 
-
-    /**
-     * Establece la contraseña del usuario y actualiza la fecha del último cambio de contraseña.
-     *
-     * @param password Nueva contraseña encriptada del usuario.
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
