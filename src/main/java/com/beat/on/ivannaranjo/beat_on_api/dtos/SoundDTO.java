@@ -7,10 +7,26 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoleDTO {
+public class SoundDTO {
     private Long id;
 
     @NotEmpty
     @Size(max = 50)
     private String name;
+
+    @NotEmpty
+    @Size(max = 10)
+    private String duration;
+
+    @NotEmpty
+    @Size(max = 255)
+    private String image;
+
+    @NotEmpty
+    @Size(max = 255)
+    private String soundPath;
+
+    private Boolean enabled;
+
+    private CategoryDTO category;
 }

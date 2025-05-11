@@ -8,8 +8,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class AvatarCreateDTO {
+public class SoundCreateDTO {
     @NotEmpty
-    @Size(max = 255)
-    private MultipartFile path;
+    @Size(max = 50)
+    private String name;
+
+    @NotEmpty
+    @Size(max = 10)
+    private String duration;
+
+    private MultipartFile image;
+    private MultipartFile soundPath;
+
+    private Boolean enabled;
+
+    private CategoryDTO category;
 }

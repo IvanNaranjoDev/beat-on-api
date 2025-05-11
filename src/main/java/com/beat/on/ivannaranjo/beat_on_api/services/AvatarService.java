@@ -25,15 +25,15 @@ public class AvatarService {
     private FileStorageService fileStorageService;
 
     public List<AvatarDTO> getAllAvatars(){
-        List<Avatar> categories = avatarRepository.findAll();
-        return categories.stream()
+        List<Avatar> avatars = avatarRepository.findAll();
+        return avatars.stream()
                 .map(avatarMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public Optional<AvatarDTO> getAvatarById(Long id){
-        Optional<Avatar> category = avatarRepository.findById(id);
-        return category.map(avatarMapper::toDTO);
+        Optional<Avatar> avatar = avatarRepository.findById(id);
+        return avatar.map(avatarMapper::toDTO);
     }
 
     public AvatarDTO createAvatar(AvatarCreateDTO createDTO) {

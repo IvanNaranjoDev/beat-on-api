@@ -7,10 +7,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoleDTO {
+public class CategoryDTO {
     private Long id;
 
     @NotEmpty
     @Size(max = 50)
     private String name;
+
+    @NotEmpty
+    @Size(max = 7)
+    private String color;
+
+    @NotEmpty
+    @Size(max = 255)
+    private String iconUrl;
 }

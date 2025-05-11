@@ -28,27 +28,27 @@ public class User {
 
 
     // Campo que almacena el nombre de usuario. Actúa como la clave primaria.
-    @NotEmpty(message = "{msg.user.username.notEmpty}")
-    @Size(max = 50, message = "{msg.user.username.size}")
     @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Size(max = 50)
+    @NotEmpty
     private String username;
 
 
     // Campo que almacena el correo electronico
-    @Size(max = 100, message = "{msg.user.username.size}")
     @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Size(max = 100)
     private String email;
 
     // Campo que almacena la contraseña encriptada del usuario.
-    @NotEmpty(message = "{msg.user.password.notEmpty}")
-    @Size(min = 8, message = "{msg.user.password.size}")
     @Column(name = "passcode", nullable = false)
+    @Size(min = 8)
+    @NotEmpty
     private String password;
 
 
     // Campo que indica si el usuario está habilitado.
-    @NotNull(message = "{msg.user.enabled.notNull}")
     @Column(name = "enabled", nullable = false)
+    @NotNull
     private boolean enabled;
 
     @ManyToOne(fetch = FetchType.LAZY)

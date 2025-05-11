@@ -25,9 +25,9 @@ public class Role {
 
 
     // Nombre del rol, como "ROLE_ADMIN" o "ROLE_USER".
-    @NotEmpty(message = "{msg.role.name.notEmpty}")
-    @Size(max = 50, message = "{msg.role.name.size}")
     @Column(name = "role_name", nullable = false, unique = true, length = 50)
+    @Size(max = 50)
+    @NotEmpty
     private String name;
 
 
