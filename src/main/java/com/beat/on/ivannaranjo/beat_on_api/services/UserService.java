@@ -1,24 +1,29 @@
 package com.beat.on.ivannaranjo.beat_on_api.services;
 
+import com.beat.on.ivannaranjo.beat_on_api.dtos.AvatarDTO;
+import com.beat.on.ivannaranjo.beat_on_api.dtos.RoleDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.UserCreateDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.UserDTO;
+import com.beat.on.ivannaranjo.beat_on_api.entities.Avatar;
+import com.beat.on.ivannaranjo.beat_on_api.entities.Role;
 import com.beat.on.ivannaranjo.beat_on_api.entities.User;
+import com.beat.on.ivannaranjo.beat_on_api.mappers.AvatarMapper;
 import com.beat.on.ivannaranjo.beat_on_api.mappers.RoleMapper;
 import com.beat.on.ivannaranjo.beat_on_api.mappers.UserMapper;
+import com.beat.on.ivannaranjo.beat_on_api.repositories.AvatarRepository;
+import com.beat.on.ivannaranjo.beat_on_api.repositories.RoleRepository;
 import com.beat.on.ivannaranjo.beat_on_api.repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +38,18 @@ public class UserService {
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private AvatarMapper avatarMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private AvatarRepository avatarRepository;
 
     @GetMapping
     public List<UserDTO> getAllUsers(){
@@ -67,6 +84,7 @@ public class UserService {
             }
 
             User user = userMapper.toEntity(userCreateDTO);
+            user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
             User savedUser = userRepository.save(user);
 
             logger.info("Usuario creado exitosamente con ID {}", savedUser.getId());
@@ -96,7 +114,7 @@ public class UserService {
             userToUpdate.setEmail(userCreateDTO.getEmail());
             userToUpdate.setUsername(userCreateDTO.getUsername());
             if (userCreateDTO.getPassword() != null && !userCreateDTO.getPassword().isEmpty()) {
-                userToUpdate.setPassword(userCreateDTO.getPassword());
+                userToUpdate.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
             }
             userToUpdate.setEnabled(userCreateDTO.getEnabled());
             userToUpdate.setAvatar(userMapper.toEntity(userCreateDTO).getAvatar());
@@ -135,6 +153,43 @@ public class UserService {
         } catch (Exception e) {
             logger.error("Error al eliminar el usuario con ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el usuario.");
+        }
+    }
+
+    public ResponseEntity<?> registerUser(@Valid UserCreateDTO userCreateDTO, Locale locale) {
+        try {
+            if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está en uso");
+            }
+
+
+            if (userCreateDTO.getAvatar() == null) {
+                Avatar avatar = avatarRepository.findById(1L)
+                        .orElseThrow(() -> new RuntimeException("Avatar por defecto no encontrado"));
+                AvatarDTO defaultAvatarDTO = avatarMapper.toDTO(avatar);
+                userCreateDTO.setAvatar(defaultAvatarDTO);
+            }
+
+            if (userCreateDTO.getRoles() == null) {
+                Role role = roleRepository.findById(3L)
+                        .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
+                RoleDTO defaultRoleDTO = roleMapper.toDTO(role);
+                Set<RoleDTO> defaultRoles = new HashSet<>();
+                defaultRoles.add(defaultRoleDTO);
+                userCreateDTO.setRoles(defaultRoles);
+            }
+
+            User user = userMapper.toEntity(userCreateDTO);
+            user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
+            user.setEnabled(true);
+
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(savedUser));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno al registrar: " + e.getMessage());
         }
     }
 }
