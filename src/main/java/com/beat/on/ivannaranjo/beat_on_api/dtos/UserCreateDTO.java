@@ -19,7 +19,6 @@ public class UserCreateDTO {
     @Size(max = 100)
     private String email;
 
-    @NotEmpty
     @Size(max = 50)
     private String password;
 
