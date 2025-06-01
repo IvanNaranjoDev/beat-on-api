@@ -22,5 +22,5 @@ public class SoundCreateDTO {
 
     private Boolean enabled;
 
-    private CategoryDTO category;
+    private Long categoryId;
 }

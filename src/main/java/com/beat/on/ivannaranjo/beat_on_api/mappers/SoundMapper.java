@@ -2,11 +2,13 @@ package com.beat.on.ivannaranjo.beat_on_api.mappers;
 
 import com.beat.on.ivannaranjo.beat_on_api.dtos.SoundCreateDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.SoundDTO;
+import com.beat.on.ivannaranjo.beat_on_api.entities.Category;
 import com.beat.on.ivannaranjo.beat_on_api.entities.Sound;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SoundMapper {
+
     public SoundDTO toDTO(Sound sound) {
         SoundDTO dto = new SoundDTO();
         CategoryMapper categoryMapper = new CategoryMapper();
@@ -39,12 +41,18 @@ public class SoundMapper {
 
     public Sound toEntity(SoundCreateDTO createDTO) {
         Sound sound = new Sound();
-        CategoryMapper categoryMapper = new CategoryMapper();
 
         sound.setName(createDTO.getName());
         sound.setDuration(createDTO.getDuration());
         sound.setEnabled(createDTO.getEnabled());
-        sound.setCategory(categoryMapper.toEntity(createDTO.getCategory()));
+
+        if (createDTO.getCategoryId() != null) {
+            Category category = new Category();
+            category.setId(createDTO.getCategoryId());
+            sound.setCategory(category);
+        } else {
+            sound.setCategory(null);
+        }
 
         return sound;
     }

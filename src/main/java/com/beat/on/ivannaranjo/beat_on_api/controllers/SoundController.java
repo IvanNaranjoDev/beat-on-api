@@ -1,8 +1,8 @@
 package com.beat.on.ivannaranjo.beat_on_api.controllers;
 
-import com.beat.on.ivannaranjo.beat_on_api.dtos.*;
+import com.beat.on.ivannaranjo.beat_on_api.dtos.SoundCreateDTO;
+import com.beat.on.ivannaranjo.beat_on_api.dtos.SoundDTO;
 import com.beat.on.ivannaranjo.beat_on_api.services.SoundService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +27,6 @@ public class SoundController {
     @Autowired
     private SoundService soundService;
 
-    // *** OBTENCIÓN DE TODOS LOS SONIDOS ***
     @Operation(summary = "Obtención de todos los sonidos", description = "Devuelve una lista de todos los sonidos disponibles.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de sonidos obtenida exitosamente.",
@@ -45,7 +44,6 @@ public class SoundController {
         }
     }
 
-    // *** OBTENCIÓN DE SONIDO POR ID ***
     @Operation(summary = "Obtención de un sonido por ID", description = "Devuelve un sonido específico mediante su ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sonido encontrado.",
@@ -68,7 +66,6 @@ public class SoundController {
         }
     }
 
-    // *** CREACIÓN DE SONIDO ***
     @Operation(summary = "Creación de un nuevo sonido", description = "Crea un nuevo sonido con los datos proporcionados.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Sonido creado exitosamente.",
@@ -84,19 +81,16 @@ public class SoundController {
             @RequestParam("image") MultipartFile image,
             @RequestParam("soundPath") MultipartFile soundPath,
             @RequestParam("enabled") boolean enabled,
-            @RequestParam("category") String categoryJson,
+            @RequestParam("categoryId") Long categoryId,
             Locale locale) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            CategoryDTO category = objectMapper.readValue(categoryJson, CategoryDTO.class);
-
             SoundCreateDTO createDTO = new SoundCreateDTO();
             createDTO.setName(name);
             createDTO.setDuration(duration);
             createDTO.setImage(image);
             createDTO.setSoundPath(soundPath);
             createDTO.setEnabled(enabled);
-            createDTO.setCategory(category);
+            createDTO.setCategoryId(categoryId);
 
             SoundDTO soundDTO = soundService.createSound(createDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(soundDTO);
@@ -109,7 +103,6 @@ public class SoundController {
         }
     }
 
-    // *** ACTUALIZACIÓN DE SONIDO ***
     @Operation(summary = "Actualización de un sonido", description = "Actualiza un sonido existente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sonido actualizado exitosamente.",
@@ -135,7 +128,6 @@ public class SoundController {
         }
     }
 
-    // *** ELIMINACIÓN DE SONIDO ***
     @Operation(summary = "Eliminación de un sonido", description = "Elimina un sonido existente por su ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sonido eliminado exitosamente."),
