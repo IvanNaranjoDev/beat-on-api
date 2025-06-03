@@ -1,9 +1,6 @@
 package com.beat.on.ivannaranjo.beat_on_api.services;
 
-import com.beat.on.ivannaranjo.beat_on_api.dtos.AvatarDTO;
-import com.beat.on.ivannaranjo.beat_on_api.dtos.RoleDTO;
-import com.beat.on.ivannaranjo.beat_on_api.dtos.UserCreateDTO;
-import com.beat.on.ivannaranjo.beat_on_api.dtos.UserDTO;
+import com.beat.on.ivannaranjo.beat_on_api.dtos.*;
 import com.beat.on.ivannaranjo.beat_on_api.entities.Avatar;
 import com.beat.on.ivannaranjo.beat_on_api.entities.Role;
 import com.beat.on.ivannaranjo.beat_on_api.entities.User;
@@ -19,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +48,9 @@ public class UserService {
 
     @Autowired
     private AvatarRepository avatarRepository;
+
+    @Autowired
+    private AvatarService avatarService;
 
     @GetMapping
     public List<UserDTO> getAllUsers(){
@@ -191,5 +192,63 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error interno al registrar: " + e.getMessage());
         }
+    }
+
+    public ResponseEntity<UserDTO> getOwnProfile(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        UserDTO dto = userMapper.toDTO(optionalUser.get());
+        return ResponseEntity.ok(dto);
+    }
+
+    public ResponseEntity<?> updateOwnProfile(UserProfileUpdateDTO dto, String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+
+        User user = optionalUser.get();
+
+        if (!user.getEmail().equals(dto.getEmail()) &&
+                userRepository.existsByEmail(dto.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está en uso por otro usuario");
+        }
+
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+
+        if (dto.getAvatar() != null) {
+            Avatar avatar = avatarMapper.toEntity(dto.getAvatar());
+            user.setAvatar(avatar);
+        }
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDTO(user));
+    }
+
+    public String deleteOwnAccount(String username, String password) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+
+        User user = optionalUser.get();
+
+        System.out.println("Intentando borrar usuario: " + username);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            System.out.println("Contraseña incorrecta para usuario: " + username);
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+
+        userRepository.delete(user);
+
+        System.out.println("Usuario eliminado: " + username);
+
+        return "Cuenta eliminada correctamente";
     }
 }

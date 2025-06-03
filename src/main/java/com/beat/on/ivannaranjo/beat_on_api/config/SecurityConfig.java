@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/**", "/api/avatars/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/categories/**", "/api/sounds/**").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/profile/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/v1/auth/**", "/api-docs/**", "/api-docs.yaml", "/swagger-ui/**", "/api/uploads/**", "/api/register/**").permitAll()
                         .anyRequest().authenticated()
                 )
