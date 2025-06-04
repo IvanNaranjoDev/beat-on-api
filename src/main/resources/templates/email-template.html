@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light only">
+    <title th:text="${subject}">Notificación</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background-color:#fff;">
+<div style="max-width:600px;margin:auto;border:1px solid #ccc;">
+    <div style="background: #FDD142 url('https://i.imgur.com/4XnvUd5.png') center/cover no-repeat; text-align: center;">
+        <img src="https://i.imgur.com/xPmzUGB.png" alt="Logo BeatOn" style="width: 100px;">
+    </div>
+    <div style="padding:30px;text-align:center;">
+        <h2 style="color:#000;">Querido Usuario</h2>
+        <p style="font-size:16px;">Esta notificación ha sido enviada por uno de nuestros administradores para informarle de lo siguiente:</p>
+        <div style="background-color:#e0e0e0;padding:20px;margin-top:20px;border-radius:5px;">
+            <p style="font-size:16px;color:#000;" th:text="${text}">Aquí va el texto</p>
+        </div>
+    </div>
+    <div style="text-align:center;padding:20px;font-size:14px;color:#555;">
+        Gracias por confiar en nosotros.
+    </div>
+</div>
+</body>
+</html>
