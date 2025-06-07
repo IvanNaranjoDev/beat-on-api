@@ -63,11 +63,13 @@ CREATE TABLE IF NOT EXISTS instrumentals (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 'sounds'
+-- 'inst_sounds'
 CREATE TABLE IF NOT EXISTS inst_sounds (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     sound_id BIGINT NOT NULL,
     instrumental_id BIGINT NOT NULL,
-    PRIMARY KEY (sound_id, instrumental_id),
+    step_index INT NOT NULL,
+    row_index INT NOT NULL,
     FOREIGN KEY (sound_id) REFERENCES sounds(id) ON DELETE CASCADE,
     FOREIGN KEY (instrumental_id) REFERENCES instrumentals(id) ON DELETE CASCADE
 );

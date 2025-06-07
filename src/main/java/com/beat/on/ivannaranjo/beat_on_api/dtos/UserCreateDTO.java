@@ -1,6 +1,5 @@
 package com.beat.on.ivannaranjo.beat_on_api.dtos;
 
-import com.beat.on.ivannaranjo.beat_on_api.entities.Role;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

@@ -251,4 +251,10 @@ public class UserService {
 
         return "Cuenta eliminada correctamente";
     }
+
+    public Long getUserIdByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
 }
