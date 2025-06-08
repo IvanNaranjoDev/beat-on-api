@@ -126,13 +126,26 @@ public class InstrumentalService {
         try {
             logger.info("Actualizando instrumental con ID {}", id);
 
+            if (instrumentalCreateDTO == null) {
+                logger.error("El DTO recibido es null");
+                return ResponseEntity.badRequest().body("Datos de actualización vacíos");
+            }
+
+            logger.info("Datos recibidos para actualización: nombre={}, bpm={}, public={}, userId={}",
+                    instrumentalCreateDTO.getInstName(),
+                    instrumentalCreateDTO.getBpm(),
+                    instrumentalCreateDTO.isPublic(),
+                    instrumentalCreateDTO.getUserId());
+
             Optional<Instrumental> optionalInstrumental = instrumentalRepository.findById(id);
             if (optionalInstrumental.isEmpty()) {
+                logger.warn("Instrumental con ID {} no encontrado", id);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El instrumental no existe.");
             }
 
             Optional<User> optionalUser = userRepository.findById(instrumentalCreateDTO.getUserId());
             if (optionalUser.isEmpty()) {
+                logger.warn("Usuario con ID {} no encontrado", instrumentalCreateDTO.getUserId());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no encontrado.");
             }
 
@@ -144,19 +157,25 @@ public class InstrumentalService {
 
             MultipartFile coverFile = instrumentalCreateDTO.getCoverUrl();
             String fileName = instrumentalToUpdate.getCoverUrl();
+
             if (coverFile != null && !coverFile.isEmpty()) {
+                logger.info("Se recibió archivo de portada con nombre original: {}", coverFile.getOriginalFilename());
                 fileName = fileStorageService.saveFile(coverFile);
                 if (fileName == null) {
+                    logger.error("Error al guardar la imagen de portada.");
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar la imagen de portada.");
                 }
+            } else {
+                logger.info("No se recibió archivo de portada, se mantiene la existente");
             }
             instrumentalToUpdate.setCoverUrl(fileName);
 
             Instrumental updatedInstrumental = instrumentalRepository.save(instrumentalToUpdate);
+            logger.info("Instrumental con ID {} actualizado correctamente", updatedInstrumental.getId());
             return ResponseEntity.ok(instrumentalMapper.toDTO(updatedInstrumental));
 
         } catch (Exception e) {
-            logger.error("Error al actualizar el instrumental con ID {}: {}", id, e.getMessage());
+            logger.error("Error al actualizar el instrumental con ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el instrumental.");
         }
     }
