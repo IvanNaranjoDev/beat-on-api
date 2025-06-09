@@ -79,20 +79,35 @@ public class UserService {
         try {
             logger.info("Creando nuevo usuario con username {}", userCreateDTO.getUsername());
 
-            if (userRepository.existsByEmail(userCreateDTO.getEmail()) && userRepository.existsByUsername(userCreateDTO.getUsername())) {
-                logger.warn("Error al crear usuario: Email o usuario ya utilizados");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear usuario: Email o usuario ya utilizados");
+            // Validar email y username por separado
+            if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
+                logger.warn("Error al crear usuario: Email ya utilizado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear usuario: Email ya utilizado");
+            }
+            if (userRepository.existsByUsername(userCreateDTO.getUsername())) {
+                logger.warn("Error al crear usuario: Username ya utilizado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear usuario: Username ya utilizado");
             }
 
             User user = userMapper.toEntity(userCreateDTO);
             user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
+
+            if (userCreateDTO.getAvatar() != null && userCreateDTO.getAvatar().getId() != null) {
+                Optional<Avatar> avatarOpt = avatarRepository.findById(userCreateDTO.getAvatar().getId());
+                if (avatarOpt.isPresent()) {
+                    user.setAvatar(avatarOpt.get());
+                } else {
+                    user.setAvatar(null);
+                }
+            }
+
             User savedUser = userRepository.save(user);
 
             logger.info("Usuario creado exitosamente con ID {}", savedUser.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(savedUser));
         } catch (Exception e) {
             logger.error("Error al crear el usuario: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la usuario.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario.");
         }
     }
 
@@ -118,7 +133,17 @@ public class UserService {
                 userToUpdate.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
             }
             userToUpdate.setEnabled(userCreateDTO.getEnabled());
-            userToUpdate.setAvatar(userMapper.toEntity(userCreateDTO).getAvatar());
+            if (userCreateDTO.getAvatar() != null && userCreateDTO.getAvatar().getId() != null) {
+                Optional<Avatar> avatarOpt = avatarRepository.findById(userCreateDTO.getAvatar().getId());
+                if (avatarOpt.isPresent()) {
+                    userToUpdate.setAvatar(avatarOpt.get());
+                } else {
+                    userToUpdate.setAvatar(null);
+                }
+            } else {
+                userToUpdate.setAvatar(null);
+            }
+
             if (userCreateDTO.getRoles() != null) {
                 userToUpdate.setRoles(
                         userCreateDTO.getRoles()
