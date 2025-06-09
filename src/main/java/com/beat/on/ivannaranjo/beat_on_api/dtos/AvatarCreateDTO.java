@@ -9,7 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class AvatarCreateDTO {
-    @NotEmpty
-    @Size(max = 255)
     private MultipartFile path;
 }

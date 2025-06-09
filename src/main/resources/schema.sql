@@ -76,9 +76,10 @@ CREATE TABLE IF NOT EXISTS inst_sounds (
 
 -- 'likes'
 CREATE TABLE IF NOT EXISTS likes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     instrumental_id BIGINT NOT NULL,
-    PRIMARY KEY (user_id, instrumental_id),
+    UNIQUE (user_id, instrumental_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (instrumental_id) REFERENCES instrumentals(id) ON DELETE CASCADE
 );

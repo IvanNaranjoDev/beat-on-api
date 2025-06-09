@@ -34,7 +34,7 @@ public class CategoryService {
 
     public Optional<CategoryDTO> getCategoryById(Long id){
         Optional<Category> category = categoryRepository.findById(id);
-        return category.map((categoryMapper::toDTO));
+        return category.map(categoryMapper::toDTO);
     }
 
     public CategoryDTO createCategory(CategoryCreateDTO createDTO) {
