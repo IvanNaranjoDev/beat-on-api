@@ -3,6 +3,9 @@ package com.beat.on.ivannaranjo.beat_on_api.controllers;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.LikeCreateDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.LikeDTO;
 import com.beat.on.ivannaranjo.beat_on_api.services.LikeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,11 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
+    @Operation(summary = "Obtener todos los likes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de likes obtenida correctamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping
     public ResponseEntity<List<LikeDTO>> getAllLikes() {
         try {
@@ -28,6 +36,12 @@ public class LikeController {
         }
     }
 
+    @Operation(summary = "Obtener un like por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Like encontrado"),
+            @ApiResponse(responseCode = "404", description = "Like no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getLikeBiId(@PathVariable Long id) {
         try {
@@ -42,6 +56,11 @@ public class LikeController {
         }
     }
 
+    @Operation(summary = "Obtener los likes realizados por un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de likes del usuario obtenida correctamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping("/by-user/{userId}")
     public ResponseEntity<List<LikeDTO>> getLikesByUser(@PathVariable Long userId) {
         try {
@@ -52,6 +71,12 @@ public class LikeController {
         }
     }
 
+    @Operation(summary = "Crear un nuevo like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Like creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos para crear el like"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping
     public ResponseEntity<?> createLike(@RequestBody LikeCreateDTO dto) {
         try {
@@ -64,6 +89,11 @@ public class LikeController {
         }
     }
 
+    @Operation(summary = "Eliminar un like por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Like eliminado con éxito"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteLike(@PathVariable Long id) {
         try {

@@ -4,6 +4,9 @@ import com.beat.on.ivannaranjo.beat_on_api.dtos.InstSoundCreateDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.InstSoundDTO;
 import com.beat.on.ivannaranjo.beat_on_api.dtos.StepDTO;
 import com.beat.on.ivannaranjo.beat_on_api.services.InstSoundService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,8 @@ public class InstSoundController {
     @Autowired
     private InstSoundService instSoundService;
 
+    @Operation(summary = "Obtener todas las posiciones de sonidos")
+    @ApiResponse(responseCode = "200", description = "Lista de posiciones obtenida correctamente")
     @GetMapping
     public ResponseEntity<List<InstSoundDTO>> getAllInstSounds(){
         try{
@@ -32,6 +37,11 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Obtener una posición de sonido por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Posición encontrada"),
+            @ApiResponse(responseCode = "404", description = "La posición no existe")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getInstSoundById(@PathVariable Long id) {
         try {
@@ -46,6 +56,11 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Crear una nueva posición de sonido")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Posición creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping
     public ResponseEntity<?> createInstSounds(
             @Valid @RequestBody InstSoundCreateDTO createDTO,
@@ -60,6 +75,11 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Actualizar los pasos de una posición de sonido")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pasos actualizados correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<?> updateInstSoundsSteps(
             @PathVariable Long id,
@@ -75,6 +95,11 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Eliminar una posición de sonido por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Posición eliminada correctamente"),
+            @ApiResponse(responseCode = "404", description = "La posición no existe")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteInstSounds(@PathVariable Long id) {
         try {
@@ -87,6 +112,8 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Obtener posiciones de sonidos por ID de instrumental")
+    @ApiResponse(responseCode = "200", description = "Lista de posiciones obtenida correctamente")
     @GetMapping("/by-instrumental/{instrumentalId}")
     public ResponseEntity<?> getByInstrumentalId(@PathVariable Long instrumentalId) {
         try {
@@ -98,6 +125,8 @@ public class InstSoundController {
         }
     }
 
+    @Operation(summary = "Obtener la estructura del secuenciador por ID de instrumental")
+    @ApiResponse(responseCode = "200", description = "Estructura del secuenciador obtenida correctamente")
     @GetMapping("/{instrumentalId}/steps")
     public ResponseEntity<List<StepDTO>> getSequencerSteps(@PathVariable Long instrumentalId) {
         return ResponseEntity.ok(instSoundService.getSequencerRowsByInstrumentalId(instrumentalId));

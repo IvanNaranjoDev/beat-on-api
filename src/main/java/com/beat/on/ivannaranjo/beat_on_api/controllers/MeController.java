@@ -1,6 +1,9 @@
 package com.beat.on.ivannaranjo.beat_on_api.controllers;
 
 import com.beat.on.ivannaranjo.beat_on_api.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,11 @@ public class MeController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Obtener el ID del usuario autenticado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "ID de usuario obtenido correctamente"),
+            @ApiResponse(responseCode = "401", description = "No autorizado – usuario no autenticado")
+    })
     @GetMapping
     public ResponseEntity<Map<String, Long>> getUserInfo(Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {

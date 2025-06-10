@@ -1,6 +1,9 @@
 package com.beat.on.ivannaranjo.beat_on_api.controllers;
 
 import com.beat.on.ivannaranjo.beat_on_api.services.FileStorageService;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.media.Content;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,12 @@ public class FileStorageController {
     @Value("${UPLOAD_PATH}")
     private String uploadPath;
 
+    @Operation(summary = "Obtener archivo subido por nombre")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Archivo encontrado y devuelto"),
+            @ApiResponse(responseCode = "404", description = "Archivo no encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
+    })
     @GetMapping("/{fileName}")
     public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
         try {

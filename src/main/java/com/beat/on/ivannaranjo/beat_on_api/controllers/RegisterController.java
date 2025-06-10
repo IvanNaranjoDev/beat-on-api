@@ -2,6 +2,10 @@ package com.beat.on.ivannaranjo.beat_on_api.controllers;
 
 import com.beat.on.ivannaranjo.beat_on_api.dtos.UserCreateDTO;
 import com.beat.on.ivannaranjo.beat_on_api.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,15 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
+    @Operation(
+            summary = "Registrar nuevo usuario",
+            description = "Crea una nueva cuenta de usuario en el sistema. No se permite asignar roles ni avatar desde este endpoint."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario registrado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos o incompletos", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
+    })
     @PostMapping
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDTO userCreateDTO, Locale locale) {
         try {
