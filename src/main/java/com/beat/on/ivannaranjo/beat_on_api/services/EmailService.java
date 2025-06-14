@@ -40,22 +40,39 @@ public class EmailService {
         validateEmailParameters(to, subject);
 
         try {
+            System.out.println("Creando mensaje...");
+
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            if (fromEmail == null || fromEmail.isEmpty()) {
+                throw new EmailException("La dirección del remitente (fromEmail) no está configurada.", null);
+            }
+
             helper.setFrom(fromEmail);
             helper.setTo(to);
             helper.setSubject(subject);
 
             Context context = new Context();
             context.setVariable("subject", subject);
-            context.setVariable("text", text);
+            context.setVariable("text", text != null ? text : ""); // Asegurar que no sea null
 
-            String htmlContent = templateEngine.process("email-template", context);
+            System.out.println("Procesando plantilla HTML...");
+            String htmlContent = templateEngine.process("email-template", context); // Thymeleaf buscará en /templates/
+
             helper.setText(htmlContent, true);
 
+            System.out.println("Enviando correo a " + to + "...");
             emailSender.send(message);
+
+            System.out.println("Correo enviado correctamente.");
+
         } catch (MessagingException e) {
-            throw new EmailException("Fallo al enviar el email a " + to, e);
+            e.printStackTrace();
+            throw new EmailException("Fallo al construir o enviar el email a " + to, e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EmailException("Error inesperado al enviar el email a " + to, e);
         }
     }
 
